@@ -1,0 +1,7 @@
+interface IUpgrader {
+
+}
+
+class Upgrader {
+    
+}

@@ -1,0 +1,19 @@
+{
+  "name": "screeps",
+  "version": "1.0.0",
+  "description": "TypeScript environment fot Screeps development",
+  "main": "main.ts",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "grunt": "^1.3.0",
+    "grunt-screeps": "^1.4.0",
+    "typescript": "^4.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "modd"
+  },
+  "keywords": [],
+  "author": "Dmitry Rog",
+  "license": "ISC"
+}
