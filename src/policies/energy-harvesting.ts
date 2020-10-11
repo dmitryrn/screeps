@@ -3,3 +3,5 @@
 
 // we have some bottom limit, if we reach it, we start to mine energy
 // there is a upper limit, if we reach it, we stop to mine energy
+
+export const doWeHaveEnoughEnergy = () => false
