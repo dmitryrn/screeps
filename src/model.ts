@@ -2,9 +2,13 @@ export namespace NCreep {
     // identifiers used in memory of creep
     export const HARVESTER = 'HARVESTER'
     export const UPGRADER = 'UPGRADER'
-    export type creepTypeInternal = typeof HARVESTER | typeof UPGRADER
+    export const BUILDER = 'BUILDER'
+    export type creepTypeInternal
+        = typeof HARVESTER
+        | typeof UPGRADER
+        | typeof BUILDER
 
-    export const harvesterBodyParts: BodyPartConstant[] = ['move', 'work', 'carry']
+    export const harvesterOrBuilderBodyParts: BodyPartConstant[] = ['move', 'work', 'carry']
     
     // e.g. Memory{ 'type': 'HARVESTER' }
     export const typeFieldName = 'type'

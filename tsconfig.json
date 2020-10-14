@@ -15,5 +15,5 @@
         "strictBindCallApply": true,
         "strictPropertyInitialization": true
     },
-    "files": ["src/main.ts"],
+    "files": ["src/main.ts"]
 }

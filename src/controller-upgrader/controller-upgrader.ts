@@ -1,6 +1,11 @@
-import type {ICreepsManager} from './creeps-manager'
-import * as model from './model'
-import {newLogger, ILogger} from './logger'
+import type {ICreepsManager} from '../creeps-manager'
+import * as model from '../model'
+import {newLogger, ILogger} from '../logger'
+import {StrategySpawner} from './strategy-spawner'
+
+export interface UpgradeStrategy {
+    execute(logger: ILogger, room: Room, creeps: Creep[]): void
+}
 
 interface IUpgrader {
     manage(): void
@@ -26,13 +31,13 @@ class Upgrader implements IUpgrader {
     }
 
     private spawnUpgraderCreep() {
-        this.creepsManager.spawnCreep(model.NCreep.harvesterBodyParts, {
+        this.creepsManager.spawnCreep(model.NCreep.harvesterOrBuilderBodyParts, {
             [model.NCreep.typeFieldName]: model.NCreep.UPGRADER,
         })
     }
 
     private haveUpgraderScreeps() {
-        return this.creepsManager.getCreepsByType(model.NCreep.UPGRADER).length > 0
+        return this.creepsManager.getCreepsByType(this.room, model.NCreep.UPGRADER).length > 0
     }
 
     private upgradeStrategy(creep: Creep) {
@@ -75,12 +80,23 @@ class Upgrader implements IUpgrader {
             return
 
         if (!this.haveUpgraderScreeps()) {
+            this.logger.log('spawning upgrader creep')
             this.spawnUpgraderCreep()
             return
         }
 
-        this.creepsManager
-            .getCreepsByType(model.NCreep.UPGRADER)
-            .forEach(creep => this.upgradeStrategy(creep))
+        const haveContainersWithEnergy = this.room.find(FIND_STRUCTURES, {
+            filter: str => str.structureType === STRUCTURE_CONTAINER && str.store[RESOURCE_ENERGY] > 0
+        })
+        if (haveContainersWithEnergy) {
+            this.logger.log('using containers strategy')
+            return
+        }
+
+        const creeps = this.creepsManager
+            .getCreepsByType(this.room, model.NCreep.UPGRADER)
+
+        this.logger.log('upgrading using spawner strategy')
+        new StrategySpawner().execute(this.logger, this.room, creeps)
     }
 }

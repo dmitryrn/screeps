@@ -2,38 +2,32 @@ import * as model from './model'
 import type {ICreepsManager} from './creeps-manager'
 
 interface IHarvesterManager {
-    // Spawn new harvesters if necessary
-    deployHarvester(): void
-
     // Manage all harvesters using strategy
-    managerHarvesters(): void
+    manage(): void
 }
 
-export const newHarvesterManager = (creepManager: ICreepsManager): IHarvesterManager => new HarvesterManager(creepManager)
+export const newHarvesterManager = (room: Room, creepManager: ICreepsManager): IHarvesterManager => new HarvesterManager(room, creepManager)
 
 class HarvesterManager implements IHarvesterManager {
-    creepManager: ICreepsManager
-
-    constructor(creepManager: ICreepsManager) {
-        this.creepManager = creepManager
+    constructor(private room: Room, private creepManager: ICreepsManager) {
     }
 
     shouldCreateHarvester() {
-        const should = this.creepManager.getCreepsByType(model.NCreep.HARVESTER).length < 1 
-            && this.creepManager.canSpawnCreep(model.NCreep.harvesterBodyParts)
+        const should =
+            this.creepManager.getCreepsByType(this.room, model.NCreep.HARVESTER).length < 1 
+            && this.creepManager.canSpawnCreep(this.room, model.NCreep.harvesterOrBuilderBodyParts)
+
         console.log('shouldCreateHarvester:', should)
         return should
     }
 
-    deployHarvester() {
+    manage() {
         if (this.shouldCreateHarvester()) {
-            this.creepManager.spawnCreep(model.NCreep.harvesterBodyParts, {
+            this.creepManager.spawnCreep(model.NCreep.harvesterOrBuilderBodyParts, {
                 [model.NCreep.typeFieldName]: model.NCreep.HARVESTER,
             })
         }
-    }
 
-    managerHarvesters() {
         const strategy = (creep: Creep) => {
             if(creep.store.getFreeCapacity() > 0) {
                 const sources = creep.room.find(FIND_SOURCES);
@@ -52,6 +46,8 @@ class HarvesterManager implements IHarvesterManager {
             }
         }
 
-        this.creepManager.getCreepsByType("HARVESTER").forEach(strategy)
+        this.creepManager
+            .getCreepsByType(this.room, "HARVESTER")
+            .forEach(strategy)
     }
 }

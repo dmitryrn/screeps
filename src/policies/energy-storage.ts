@@ -4,13 +4,22 @@
 // we build new storages until upper limit is reached
 
 export interface IEnergyStoragePolicy {
-    shouldBuildMoreStorages(): boolean
+    shouldBuildMoreContainers(room: Room): boolean
 }
 
 export const newEnergyStoragePolicy = (): IEnergyStoragePolicy => new EnergyStoragePolicy()
 
 class EnergyStoragePolicy implements IEnergyStoragePolicy {
-    shouldBuildMoreStorages(): boolean {
-        return true
+    shouldBuildMoreContainers(room: Room): boolean {
+        // todo: this only checks for containers, it doesn't check type in any way
+        const containersInRoom = room.find(FIND_STRUCTURES, {
+            filter: str => str.structureType === STRUCTURE_CONTAINER
+        })
+
+        if (!containersInRoom.length) {
+            return true
+        }
+
+        return false
     }
 }
