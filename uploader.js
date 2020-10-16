@@ -8,7 +8,7 @@ assert.ok(process.env.SCREEPS_PASSWORD)
 const path = require('path')
 const fs = require('fs')
 
-const mainjs = fs.readFileSync(path.resolve('.', 'dist', 'main.js')).toString()
+const mainjs = fs.readFileSync(path.resolve('.', 'dist', 'stage-bundler', 'main.js')).toString()
 
 var https = require('https');
 

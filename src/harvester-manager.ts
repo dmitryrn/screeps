@@ -23,25 +23,32 @@ class HarvesterManager implements IHarvesterManager {
 
     manage() {
         if (this.shouldCreateHarvester()) {
-            this.creepManager.spawnCreep(model.NCreep.harvesterOrBuilderBodyParts, {
+            this.creepManager.spawnCreep(this.room, model.NCreep.harvesterOrBuilderBodyParts, {
                 [model.NCreep.typeFieldName]: model.NCreep.HARVESTER,
             })
         }
 
         const strategy = (creep: Creep) => {
             if(creep.store.getFreeCapacity() > 0) {
-                const sources = creep.room.find(FIND_SOURCES);
-
-                const code = creep.harvest(sources[0])
-                console.log('creep.harvest:', code)
-
-                if(code === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(sources[0]);
+                const source = creep.pos.findClosestByRange(FIND_SOURCES)
+                if (!source) {
+                    console.log('cannot find any source')
+                    return
                 }
-            }
-            else {
-                if(creep.transfer(Game.spawns['Spawn1'], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(Game.spawns['Spawn1']);
+
+                const code = creep.harvest(source)
+                if(code === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source)
+                }
+            }  else {
+                const spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS)
+                if (!spawn) {
+                    console.log('cannot find any spawn')
+                    return
+                }
+
+                if(creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(spawn)
                 }
             }
         }

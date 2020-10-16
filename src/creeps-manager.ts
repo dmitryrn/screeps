@@ -5,7 +5,7 @@ export interface ICreepsManager {
     canSpawnCreep(room: Room, body: BodyPartConstant[]): boolean
 
     // Spawn creep with specified body parts and memory
-    spawnCreep(body: BodyPartConstant[], memory?: CreepMemory): boolean
+    spawnCreep(room: Room, body: BodyPartConstant[], memory?: CreepMemory): boolean
 
     // Get all creeps by type (internal type)
     getCreepsByType(room: Room, creepType: model.NCreep.creepTypeInternal): Creep[]
@@ -22,7 +22,6 @@ class CreepsManager implements ICreepsManager {
         Object.values(Game.creeps)
             .filter(creep => creep.my)
             .forEach(creep => {
-                creep.memory
                 const creepNameInt = parseInt(creep.name)
                 if (Number.isInteger(creepNameInt) && creepNameInt > max) {
                     max = creepNameInt
@@ -49,14 +48,16 @@ class CreepsManager implements ICreepsManager {
         })
     }
 
-    spawnCreep(body: BodyPartConstant[], memory?: CreepMemory) {
-        let code;
-        Object.values(Game.spawns).forEach(spawn => {
-            code = spawn.spawnCreep(body, this.getUniqueCreepName(), {
+    spawnCreep(room: Room, body: BodyPartConstant[], memory?: CreepMemory): boolean {
+        for (const spawn of room.find(FIND_MY_SPAWNS)) {
+            const code = spawn.spawnCreep(body, this.getUniqueCreepName(), {
                 memory,
             })
-        })
-        return code === OK
+            if (code === OK) {
+                return true
+            }
+        }
+        return false
     }
 
     getCreepsByType(room: Room, creepType: model.NCreep.creepTypeInternal): Creep[] {

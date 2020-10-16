@@ -24,14 +24,12 @@ class BuilderManager implements IBuilderManager {
     }
 
     createBuilderCreep(): boolean {
-        return this.creepsManager.spawnCreep(model.NCreep.harvesterOrBuilderBodyParts, {
+        return this.creepsManager.spawnCreep(this.room, model.NCreep.harvesterOrBuilderBodyParts, {
             [model.NCreep.typeFieldName]: model.NCreep.BUILDER,
         })
     }
 
     manage() {
-        this.logger.log('this.getConstructionSites()', this.getConstructionSites())
-
         if (!this.getConstructionSites().length) {
             this.logger.log('no constr sites')
             return
